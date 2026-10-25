@@ -1,3 +1,4 @@
+
 package com.ucenm.pm01e10030;
 
 import android.content.ContentValues;
@@ -20,12 +21,13 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         String sql = "CREATE TABLE contactos (" +
-                "id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                "pais TEXT NOT NULL," +
-                "nombre TEXT NOT NULL," +
-                "telefono TEXT NOT NULL," +
-                "nota TEXT NOT NULL," +
-                "imagen TEXT)";
+                "id INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                "pais TEXT NOT NULL, " +
+                "nombre TEXT NOT NULL, " +
+                "telefono TEXT NOT NULL, " +
+                "nota TEXT NOT NULL, " +
+                "imagen TEXT" +
+                ")";
 
         db.execSQL(sql);
     }
@@ -33,10 +35,12 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db,
                           int oldVersion, int newVersion) {
-        db.execSQL("DROP TABLE IF EXISTS contactos");
-        onCreate(db);
+        // Conserva los datos existentes al actualizar la versión.
+        // Si posteriormente cambia la estructura, añade aquí
+        // las instrucciones de migración correspondientes.
     }
 
+    // INSERTAR CONTACTO
     public long insertar(Contactos c) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -50,8 +54,10 @@ public class DBHelper extends SQLiteOpenHelper {
         return db.insert("contactos", null, valores);
     }
 
+    // LISTAR TODOS LOS CONTACTOS
     public ArrayList<Contactos> listar() {
         ArrayList<Contactos> lista = new ArrayList<>();
+
         SQLiteDatabase db = getReadableDatabase();
 
         Cursor cursor = db.rawQuery(
@@ -61,14 +67,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
         try {
             while (cursor.moveToNext()) {
-                lista.add(new Contactos(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("pais")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("nombre")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("telefono")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("nota")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("imagen"))
-                ));
+                Contactos contacto = new Contactos(
+                        cursor.getInt(
+                                cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("pais")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("nombre")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("telefono")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("nota")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("imagen"))
+                );
+
+                lista.add(contacto);
             }
         } finally {
             cursor.close();
@@ -77,6 +91,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return lista;
     }
 
+    // BUSCAR CONTACTO POR ID
     public Contactos buscarPorId(int id) {
         SQLiteDatabase db = getReadableDatabase();
 
@@ -85,18 +100,26 @@ public class DBHelper extends SQLiteOpenHelper {
                 null,
                 "id=?",
                 new String[]{String.valueOf(id)},
-                null, null, null
+                null,
+                null,
+                null
         );
 
         try {
             if (cursor.moveToFirst()) {
                 return new Contactos(
-                        cursor.getInt(cursor.getColumnIndexOrThrow("id")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("pais")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("nombre")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("telefono")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("nota")),
-                        cursor.getString(cursor.getColumnIndexOrThrow("imagen"))
+                        cursor.getInt(
+                                cursor.getColumnIndexOrThrow("id")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("pais")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("nombre")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("telefono")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("nota")),
+                        cursor.getString(
+                                cursor.getColumnIndexOrThrow("imagen"))
                 );
             }
         } finally {
@@ -106,6 +129,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return null;
     }
 
+    // ACTUALIZAR CONTACTO
     public int actualizar(Contactos c) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues valores = new ContentValues();
@@ -124,6 +148,7 @@ public class DBHelper extends SQLiteOpenHelper {
         );
     }
 
+    // ELIMINAR CONTACTO
     public int eliminar(int id) {
         SQLiteDatabase db = getWritableDatabase();
 
@@ -132,5 +157,27 @@ public class DBHelper extends SQLiteOpenHelper {
                 "id=?",
                 new String[]{String.valueOf(id)}
         );
+    }
+
+    // MÉTODOS COMPATIBLES CON LAS ACTIVIDADES JAVA
+
+    public boolean insertarContacto(Contactos c) {
+        return insertar(c) != -1;
+    }
+
+    public ArrayList<Contactos> obtenerContactos() {
+        return listar();
+    }
+
+    public Contactos obtenerContactoPorId(int id) {
+        return buscarPorId(id);
+    }
+
+    public boolean actualizarContacto(Contactos c) {
+        return actualizar(c) > 0;
+    }
+
+    public boolean eliminarContacto(int id) {
+        return eliminar(id) > 0;
     }
 }

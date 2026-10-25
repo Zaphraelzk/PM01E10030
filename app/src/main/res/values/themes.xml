@@ -1,9 +1,19 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PM01E10030" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.GestionContactos"
+        parent="Theme.AppCompat.Light.NoActionBar">
+
+        <item name="colorPrimary">@color/verde_principal</item>
+        <item name="colorPrimaryDark">@color/verde_oscuro</item>
+        <item name="colorAccent">@color/morado_principal</item>
+
+        <item name="android:fontFamily">sans</item>
+        <item name="android:statusBarColor">@color/verde_oscuro</item>
+        <item name="android:navigationBarColor">@color/negro</item>
+        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowBackground">@color/fondo</item>
+
     </style>
 
-    <style name="Theme.PM01E10030" parent="Base.Theme.PM01E10030" />
 </resources>

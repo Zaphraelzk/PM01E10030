@@ -1,25 +1,18 @@
-
 package com.ucenm.pm01e10030;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
-import android.text.InputFilter;
-import android.text.InputType;
+import android.provider.MediaStore;
 import android.util.Base64;
-import android.view.Gravity;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,440 +22,191 @@ import java.io.InputStream;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int SOLICITAR_FOTO = 100;
+
+    private ImageView foto;
     private EditText nombre, telefono, nota;
     private Spinner pais;
-    private ImageView foto;
-    private DBHelper db;
+    private Button btnGuardar, btnFoto, btnVer;
 
+    private DBHelper db;
     private String imagenBase64 = "";
     private int idEditar = -1;
-
-    private final String[] paises = {
-            "Honduras (+504)",
-            "Guatemala (+502)",
-            "El Salvador (+503)",
-            "Nicaragua (+505)",
-            "Costa Rica (+506)",
-            "Estados Unidos (+1)",
-            "México (+52)"
-    };
-
-    private final int VERDE = 0xFF166534;
-    private final int MORADO = 0xFF7C3AED;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
         db = new DBHelper(this);
 
-        construirPantalla();
+        foto = findViewById(R.id.imgFoto);
+        nombre = findViewById(R.id.etNombre);
+        telefono = findViewById(R.id.etTelefono);
+        nota = findViewById(R.id.etNota);
+        pais = findViewById(R.id.spPais);
+        btnGuardar = findViewById(R.id.btnGuardar);
+        btnFoto = findViewById(R.id.btnFoto);
+        btnVer = findViewById(R.id.btnVerContactos);
+
+        String[] paises = {
+                "Honduras (+504)",
+                "Guatemala (+502)",
+                "El Salvador (+503)",
+                "Nicaragua (+505)",
+                "Costa Rica (+506)",
+                "Estados Unidos (+1)",
+                "México (+52)"
+        };
+
+        ArrayAdapter<String> adaptador = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_spinner_item,
+                paises
+        );
+        adaptador.setDropDownViewResource(
+                android.R.layout.simple_spinner_dropdown_item
+        );
+        pais.setAdapter(adaptador);
+
+        btnFoto.setOnClickListener(v -> seleccionarFoto());
+        btnGuardar.setOnClickListener(v -> guardarContacto());
+        btnVer.setOnClickListener(v ->
+                startActivity(new Intent(this, ListaContactosActivity.class))
+        );
 
         idEditar = getIntent().getIntExtra("id", -1);
 
         if (idEditar != -1) {
-            cargarContacto();
+            cargarContactoParaEditar();
+            btnGuardar.setText("Actualizar contacto");
         }
-    }
-
-    private void construirPantalla() {
-
-        ScrollView scroll = new ScrollView(this);
-
-        LinearLayout layout = new LinearLayout(this);
-        layout.setOrientation(LinearLayout.VERTICAL);
-        layout.setPadding(28, 24, 28, 24);
-        layout.setBackgroundColor(0xFFF7F7F7);
-
-        scroll.addView(layout);
-        setContentView(scroll);
-
-        TextView titulo = new TextView(this);
-        titulo.setText("Gestión de contactos");
-        titulo.setTextSize(26);
-        titulo.setTextColor(VERDE);
-        titulo.setGravity(Gravity.CENTER);
-        layout.addView(titulo);
-
-        TextView subtitulo = new TextView(this);
-        subtitulo.setText("Nuevo contacto");
-        subtitulo.setTextSize(19);
-        subtitulo.setGravity(Gravity.CENTER);
-        subtitulo.setTextColor(MORADO);
-        layout.addView(subtitulo);
-
-        foto = new ImageView(this);
-
-        LinearLayout.LayoutParams fp =
-                new LinearLayout.LayoutParams(180, 180);
-
-        fp.gravity = Gravity.CENTER;
-        fp.setMargins(0, 20, 0, 8);
-
-        foto.setLayoutParams(fp);
-        foto.setImageResource(
-                android.R.drawable.ic_menu_camera
-        );
-        foto.setScaleType(ImageView.ScaleType.CENTER_CROP);
-
-        layout.addView(foto);
-
-        Button btnFoto = boton(
-                "Seleccionar fotografía", MORADO
-        );
-
-        layout.addView(btnFoto);
-
-        btnFoto.setOnClickListener(v -> seleccionarFoto());
-
-        etiqueta(layout, "País");
-
-        pais = new Spinner(this);
-
-        ArrayAdapter<String> adapter =
-                new ArrayAdapter<>(
-                        this,
-                        android.R.layout.simple_spinner_item,
-                        paises
-                );
-
-        adapter.setDropDownViewResource(
-                android.R.layout.simple_spinner_dropdown_item
-        );
-
-        pais.setAdapter(adapter);
-        layout.addView(pais);
-
-        etiqueta(layout, "Nombre");
-
-        nombre = campo(
-                "Nombre completo",
-                InputType.TYPE_CLASS_TEXT
-                        | InputType.TYPE_TEXT_FLAG_CAP_WORDS
-        );
-
-        nombre.setFilters(new InputFilter[]{
-                (source, start, end, dest, dstart, dend) -> {
-
-                    for (int i = start; i < end; i++) {
-
-                        char c = source.charAt(i);
-
-                        if (!Character.isLetter(c)
-                                && c != ' '
-                                && c != '\''
-                                && c != '-') {
-                            return "";
-                        }
-                    }
-
-                    return null;
-                }
-        });
-
-        layout.addView(nombre);
-
-        etiqueta(layout, "Teléfono");
-
-        telefono = campo(
-                "Solo números",
-                InputType.TYPE_CLASS_NUMBER
-        );
-
-        telefono.setFilters(new InputFilter[]{
-                new InputFilter.LengthFilter(15)
-        });
-
-        layout.addView(telefono);
-
-        etiqueta(layout, "Nota");
-
-        nota = campo(
-                "Nota del contacto",
-                InputType.TYPE_CLASS_TEXT
-        );
-
-        nota.setMinLines(2);
-        nota.setGravity(Gravity.TOP);
-        nota.setSingleLine(false);
-
-        layout.addView(nota);
-
-        Button guardar = boton(
-                "Guardar contacto", VERDE
-        );
-
-        layout.addView(guardar);
-
-        guardar.setOnClickListener(v -> guardarContacto());
-
-        Button ver = boton(
-                "Ver contactos", MORADO
-        );
-
-        layout.addView(ver);
-
-        ver.setOnClickListener(v -> {
-            Intent intent = new Intent(
-                    MainActivity.this,
-                    ListaContactosActivity.class
-            );
-
-            startActivity(intent);
-        });
-    }
-
-    private void etiqueta(
-            LinearLayout layout, String texto) {
-
-        TextView tv = new TextView(this);
-
-        tv.setText(texto);
-        tv.setTextColor(VERDE);
-        tv.setTextSize(16);
-        tv.setPadding(0, 12, 0, 4);
-
-        layout.addView(tv);
-    }
-
-    private EditText campo(String hint, int tipo) {
-
-        EditText editText = new EditText(this);
-
-        editText.setHint(hint);
-        editText.setTextSize(16);
-        editText.setInputType(tipo);
-        editText.setPadding(16, 8, 16, 8);
-
-        if (tipo == InputType.TYPE_CLASS_NUMBER) {
-            editText.setSingleLine(true);
-        }
-
-        return editText;
-    }
-
-    private Button boton(String texto, int color) {
-
-        Button button = new Button(this);
-
-        button.setText(texto);
-        button.setTextColor(0xFFFFFFFF);
-
-        button.setBackgroundTintList(
-                ColorStateList.valueOf(color)
-        );
-
-        return button;
     }
 
     private void seleccionarFoto() {
-
-        Intent intent = new Intent(
-                Intent.ACTION_GET_CONTENT
-        );
-
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("image/*");
-
         startActivityForResult(
-                Intent.createChooser(
-                        intent,
-                        "Seleccionar imagen"
-                ),
-                100
+                Intent.createChooser(intent, "Seleccionar fotografía"),
+                SOLICITAR_FOTO
         );
     }
 
     @Override
-    protected void onActivityResult(
-            int requestCode,
-            int resultCode,
-            Intent data) {
+    protected void onActivityResult(int requestCode, int resultCode,
+                                    Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        super.onActivityResult(
-                requestCode, resultCode, data
-        );
-
-        if (requestCode == 100
+        if (requestCode == SOLICITAR_FOTO
                 && resultCode == Activity.RESULT_OK
                 && data != null
                 && data.getData() != null) {
-
             try {
-
                 Uri uri = data.getData();
 
-                Bitmap bitmap;
+                InputStream input = getContentResolver()
+                        .openInputStream(uri);
 
-                try (InputStream is =
-                             getContentResolver()
-                                     .openInputStream(uri)) {
+                Bitmap bitmap = BitmapFactory.decodeStream(input);
 
-                    if (is == null) {
-                        throw new Exception(
-                                "No se pudo abrir la imagen"
-                        );
-                    }
-
-                    bitmap = BitmapFactory.decodeStream(is);
+                if (input != null) {
+                    input.close();
                 }
 
-                if (bitmap == null) {
-                    throw new Exception(
-                            "Imagen no válida"
+                if (bitmap != null) {
+                    // Reducir la imagen para no guardar un archivo enorme
+                    Bitmap reducida = Bitmap.createScaledBitmap(
+                            bitmap, 400, 400, true
                     );
+
+                    ByteArrayOutputStream salida =
+                            new ByteArrayOutputStream();
+
+                    reducida.compress(
+                            Bitmap.CompressFormat.JPEG, 75, salida
+                    );
+
+                    imagenBase64 = Base64.encodeToString(
+                            salida.toByteArray(), Base64.DEFAULT
+                    );
+
+                    foto.setImageBitmap(reducida);
                 }
-
-                foto.setImageBitmap(bitmap);
-
-                ByteArrayOutputStream out =
-                        new ByteArrayOutputStream();
-
-                bitmap.compress(
-                        Bitmap.CompressFormat.JPEG,
-                        70,
-                        out
-                );
-
-                // Compatible con Android API 24.
-                imagenBase64 = Base64.encodeToString(
-                        out.toByteArray(),
-                        Base64.NO_WRAP
-                );
-
-                Toast.makeText(
-                        this,
-                        "Fotografía seleccionada",
-                        Toast.LENGTH_SHORT
-                ).show();
-
             } catch (Exception e) {
-
-                Toast.makeText(
-                        this,
-                        "No se pudo cargar la imagen",
-                        Toast.LENGTH_SHORT
-                ).show();
+                Toast.makeText(this,
+                        "No se pudo cargar la fotografía",
+                        Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void guardarContacto() {
+        String nombreTexto = nombre.getText().toString().trim();
+        String telefonoTexto = telefono.getText().toString().trim();
+        String notaTexto = nota.getText().toString().trim();
+        String paisTexto = pais.getSelectedItem().toString();
 
-        String n = nombre.getText()
-                .toString().trim();
-
-        String t = telefono.getText()
-                .toString().trim();
-
-        String no = nota.getText()
-                .toString().trim();
-
-        if (n.isEmpty()) {
-
-            nombre.setError("Ingrese el nombre");
+        if (nombreTexto.isEmpty()) {
+            nombre.setError("Escribe el nombre");
             nombre.requestFocus();
             return;
         }
 
-        if (!n.matches(
-                "[\\p{L}][\\p{L} '\\-]*")) {
-
-            nombre.setError(
-                    "Ingrese un nombre válido"
-            );
-
-            nombre.requestFocus();
-            return;
-        }
-
-        if (t.isEmpty()) {
-
-            telefono.setError(
-                    "Ingrese el teléfono"
-            );
-
+        if (telefonoTexto.isEmpty()) {
+            telefono.setError("Escribe el teléfono");
             telefono.requestFocus();
             return;
         }
 
-        if (!t.matches("\\d{7,15}")) {
-
-            telefono.setError(
-                    "Use entre 7 y 15 dígitos"
-            );
-
+        String soloDigitos = telefonoTexto.replaceAll("[\\s()-]", "");
+        if (!soloDigitos.matches("\\+?\\d{7,15}")) {
+            telefono.setError("Introduce un teléfono válido");
             telefono.requestFocus();
             return;
         }
-
-        if (no.isEmpty()) {
-
-            nota.setError("Ingrese una nota");
-            nota.requestFocus();
-            return;
-        }
-
-        String p = pais.getSelectedItem().toString();
 
         Contactos contacto = new Contactos(
-                p,
-                n,
-                t,
-                no,
+                paisTexto,
+                nombreTexto,
+                telefonoTexto,
+                notaTexto,
                 imagenBase64
         );
 
-        long resultado;
+        boolean guardado;
 
         if (idEditar == -1) {
-
-            resultado = db.insertar(contacto);
-
+            guardado = db.insertarContacto(contacto);
         } else {
-
             contacto.setId(idEditar);
-
-            resultado = db.actualizar(contacto);
+            guardado = db.actualizarContacto(contacto);
         }
 
-        boolean guardado = idEditar == -1
-                ? resultado != -1
-                : resultado > 0;
-
         if (guardado) {
-
-            Toast.makeText(
-                    this,
+            Toast.makeText(this,
                     idEditar == -1
-                            ? "Contacto guardado correctamente"
-                            : "Contacto actualizado correctamente",
-                    Toast.LENGTH_SHORT
-            ).show();
+                            ? "Contacto guardado"
+                            : "Contacto actualizado",
+                    Toast.LENGTH_SHORT).show();
 
-            finish();
-
+            if (idEditar != -1) {
+                finish();
+            } else {
+                limpiarFormulario();
+            }
         } else {
-
-            Toast.makeText(
-                    this,
+            Toast.makeText(this,
                     "No se pudo guardar el contacto",
-                    Toast.LENGTH_SHORT
-            ).show();
+                    Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void cargarContacto() {
-
-        Contactos contacto = db.buscarPorId(idEditar);
+    private void cargarContactoParaEditar() {
+        Contactos contacto = db.obtenerContactoPorId(idEditar);
 
         if (contacto == null) {
-
-            Toast.makeText(
-                    this,
-                    "No se encontró el contacto",
-                    Toast.LENGTH_SHORT
-            ).show();
-
+            Toast.makeText(this, "No se encontró el contacto",
+                    Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
@@ -471,45 +215,46 @@ public class MainActivity extends AppCompatActivity {
         telefono.setText(contacto.getTelefono());
         nota.setText(contacto.getNota());
 
-        for (int i = 0; i < paises.length; i++) {
-
-            if (paises[i].equals(contacto.getPais())) {
-                pais.setSelection(i);
-                break;
+        if (contacto.getPais() != null) {
+            for (int i = 0; i < pais.getCount(); i++) {
+                if (pais.getItemAtPosition(i).toString()
+                        .equals(contacto.getPais())) {
+                    pais.setSelection(i);
+                    break;
+                }
             }
         }
 
         imagenBase64 = contacto.getImagen() == null
-                ? ""
-                : contacto.getImagen();
+                ? "" : contacto.getImagen();
 
+        mostrarFotoGuardada();
+    }
+
+    private void mostrarFotoGuardada() {
         if (!imagenBase64.isEmpty()) {
-
             try {
-
                 byte[] bytes = Base64.decode(
-                        imagenBase64,
-                        Base64.DEFAULT
+                        imagenBase64, Base64.DEFAULT
                 );
-
                 Bitmap bitmap = BitmapFactory.decodeByteArray(
-                        bytes,
-                        0,
-                        bytes.length
+                        bytes, 0, bytes.length
                 );
-
                 if (bitmap != null) {
                     foto.setImageBitmap(bitmap);
                 }
-
-            } catch (IllegalArgumentException e) {
-
-                Toast.makeText(
-                        this,
-                        "No se pudo recuperar la fotografía",
-                        Toast.LENGTH_SHORT
-                ).show();
+            } catch (Exception ignored) {
+                foto.setImageResource(android.R.drawable.ic_menu_camera);
             }
         }
+    }
+
+    private void limpiarFormulario() {
+        nombre.setText("");
+        telefono.setText("");
+        nota.setText("");
+        pais.setSelection(0);
+        imagenBase64 = "";
+        foto.setImageResource(android.R.drawable.ic_menu_camera);
     }
 }

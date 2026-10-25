@@ -1,3 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">PM01E10030</string>
+
+    <string name="app_name">Gestión de contactos</string>
+
+    <string name="titulo_principal">Gestión de contactos</string>
+    <string name="nuevo_contacto">Nuevo contacto</string>
+    <string name="lista_contactos">Lista de contactos</string>
+    <string name="llamar">Llamar</string>
+
+    <string name="pais">País</string>
+    <string name="nombre">Nombre</string>
+    <string name="telefono">Teléfono</string>
+    <string name="nota">Nota</string>
+
+    <string name="seleccionar_fotografia">Seleccionar fotografía</string>
+    <string name="guardar_contacto">Guardar contacto</string>
+    <string name="ver_contactos">Ver contactos</string>
+    <string name="buscar_contacto">Buscar contacto</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="compartir">Compartir</string>
+    <string name="ver_imagen">Ver imagen</string>
+
+    <string name="confirmar_llamada">Confirmar llamada</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="confirmar">Confirmar</string>
+
+    <string name="error_nombre">Ingrese un nombre válido</string>
+    <string name="error_telefono">Ingrese un teléfono válido</string>
+    <string name="error_nota">Ingrese una nota</string>
+
 </resources>

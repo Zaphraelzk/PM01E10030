@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F7F7"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="Mis contactos"
+        android:textColor="#166534"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <EditText
+        android:id="@+id/etBuscar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Buscar por nombre"
+        android:inputType="text"
+        android:maxLines="1" />
+
+    <ListView
+        android:id="@+id/lvContactos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:divider="#D1D5DB"
+        android:dividerHeight="1dp" />
+
+    <Button
+        android:id="@+id/btnEditar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#7C3AED"
+        android:text="Actualizar"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnEliminar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#B91C1C"
+        android:text="Eliminar"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnCompartir"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#166534"
+        android:text="Compartir"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnVerImagen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#7C3AED"
+        android:text="Ver imagen"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnLlamar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#166534"
+        android:text="Llamar"
+        android:textColor="#FFFFFF" />
+
+    <Button
+        android:id="@+id/btnNuevo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="#7C3AED"
+        android:text="Nuevo contacto"
+        android:textColor="#FFFFFF" />
+
+</LinearLayout>

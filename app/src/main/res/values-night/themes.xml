@@ -1,7 +1,17 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.PM01E10030" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your dark theme here. -->
-        <!-- <item name="colorPrimary">@color/my_dark_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Theme.GestionContactos"
+        parent="Theme.AppCompat.NoActionBar">
+
+        <item name="colorPrimary">#4ADE80</item>
+        <item name="colorPrimaryDark">#14532D</item>
+        <item name="colorAccent">#C4B5FD</item>
+
+        <item name="android:statusBarColor">#14532D</item>
+        <item name="android:navigationBarColor">#111827</item>
+        <item name="android:windowBackground">#121212</item>
+
     </style>
+
 </resources>

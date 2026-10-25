@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F7F7F7"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <ImageView
+        android:id="@+id/imgContacto"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:contentDescription="Fotografía del contacto"
+        android:scaleType="centerCrop"
+        android:src="@android:drawable/ic_menu_myplaces" />
+
+    <TextView
+        android:id="@+id/tvNombre"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:text="Nombre del contacto"
+        android:textColor="#166534"
+        android:textSize="25sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:id="@+id/tvTelefono"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Número de teléfono"
+        android:textColor="#111827"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/btnLlamarContacto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:backgroundTint="#166534"
+        android:text="Realizar llamada"
+        android:textColor="#FFFFFF" />
+
+
+    <Button
+        android:id="@+id/btnRegresar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="← REGRESAR A CONTACTOS"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#166534"
+        android:layout_marginBottom="16dp" />
+
+
+</LinearLayout>

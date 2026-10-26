@@ -7,7 +7,9 @@ https://drive.google.com/file/d/1d9ylKUM1Tbk-yB41CLKGkZakBlVraF-I/view?usp=shari
 
 
 imagenes o capturas de evidencia
-<img width="1920" height="1080" alt="Captura de pantalla (242)" src="https://github.com/user-attachments/assets/2e1cc6fa-6cc6-4303-a11a-de4baf44a47c" />
+<img width="1920" height="1080" alt="Captura de pantalla (266)" src="https://github.com/user-attachments/assets/bc1ba2a6-ea72-4768-99de-50680ff48be2" />
+<img width="1920" height="1080" alt="Captura de pantalla (267)" src="https://github.com/user-attachments/assets/117c762e-0dcd-4fbb-b5c3-f33b8b55deb5" />
+<img width="1920" height="1080" alt="Captura de pantalla (268)" src="https://github.com/user-attachments/assets/adc999bd-705a-4608-a727-14abf2332ab0" />
 <img width="1920" height="1080" alt="Captura de pantalla (243)" src="https://github.com/user-attachments/assets/f49b8d61-d050-43aa-bbcc-f2692bba0dff" />
 <img width="1920" height="1080" alt="Captura de pantalla (245)" src="https://github.com/user-attachments/assets/a92f9ffa-a57a-4029-a674-e9d7a09c6f2e" />
 <img width="1920" height="1080" alt="Captura de pantalla (244)" src="https://github.com/user-attachments/assets/18c61a5a-a1e1-4114-af0a-ef111ed0a25c" />
